@@ -19,8 +19,8 @@ def gen(**params):
     m2 = params['mass2']
     inc = params['inclination']
     ecc = params['eccentricity']
-    lamc = params['long_asc_nodes']
-    lc = params['coa_phase']
+    lc = params['long_asc_nodes']
+    lamc = params['coa_phase']
     dist = params['distance'] / 9.7156118319036E-15
 
     mchirp = float(pycbc.conversions.mchirp_from_mass1_mass2(m1, m2))
