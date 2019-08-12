@@ -19,6 +19,9 @@ def gen(**params):
     m2 = params['mass2']
     inc = params['inclination']
     ecc = params['eccentricity']
+    if ecc < 1e-5:
+        ecc = 1e-5
+
     lc = params['long_asc_nodes']
     lamc = params['coa_phase']
     dist = params['distance'] / 9.7156118319036E-15
@@ -45,5 +48,6 @@ def gen(**params):
     hc[:kmin].clear()
     return hp, hc
 
-def add_me(fd, td):
-    fd['TaylorF2e'] = gen
+def add_me(**kwds):
+    kwds['cpu_fd']['TaylorF2e'] = gen
+    kwds['filter_time_lengths']['TaylorF2e'] = kwds['filter_time_lengths']['TaylorF2']
