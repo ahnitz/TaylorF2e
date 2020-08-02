@@ -1,6 +1,6 @@
 import ctypes
 
-rlib = ctypes.cdll.LoadLibrary("./tf2e.so")
+rlib = ctypes.cdll.LoadLibrary("tf2e.so")
 
 def gen(**params):
     import numpy, pycbc.conversions
@@ -19,15 +19,18 @@ def gen(**params):
     m2 = params['mass2']
     inc = params['inclination']
     ecc = params['eccentricity']
-    lamc = params['long_asc_nodes']
-    lc = params['coa_phase']
-    dist = params['distance']
+    if ecc < 1e-5:
+        ecc = 1e-5
+
+    lc = params['long_asc_nodes']
+    lamc = params['coa_phase']
+    dist = params['distance'] / 9.7156118319036E-15
 
     mchirp = float(pycbc.conversions.mchirp_from_mass1_mass2(m1, m2))
     eta = float(pycbc.conversions.eta_from_mass1_mass2(m1, m2))
 
     hp = numpy.zeros(flen, dtype=numpy.complex128)
-    hc = hp.copy()
+    hc = numpy.zeros(flen, dtype=numpy.complex128)
 
     f = rlib.generate
     f.argtypes = [c_void_p, c_void_p, c_double, c_double, c_double,
@@ -43,7 +46,9 @@ def gen(**params):
     kmin = int(flow / df)
     hp[:kmin].clear()
     hc[:kmin].clear()
+
     return hp, hc
 
-def add_me(fd, td):
-    fd['TaylorF2e'] = gen
+def add_me(**kwds):
+    kwds['cpu_fd']['TaylorF2e'] = gen
+    kwds['filter_time_lengths']['TaylorF2e'] = kwds['filter_time_lengths']['TaylorF2']
