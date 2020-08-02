@@ -1,6 +1,11 @@
 import ctypes
+import os
 
-rlib = ctypes.cdll.LoadLibrary("tf2e.so")
+dirname = os.path.dirname(__file__)
+if dirname == '':
+    dirname = './'
+path = os.path.join(dirname, "tf2e.so")
+rlib = ctypes.cdll.LoadLibrary(path)
 
 def gen(**params):
     import numpy, pycbc.conversions
